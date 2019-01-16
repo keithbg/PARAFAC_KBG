@@ -1,0 +1,165 @@
+---
+title: "EEM EX Wavelength Investigation"
+author: "Keith Bouma-Gregson"
+date: "3/21/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+## Script to pre-process Aqualog EEMs for PARAFAC modeling
+## Some EEMs were generated 1 and 3 nm wavelength intervals
+## Need to standardize all EEMs to 3 nm intervals
+
+#### LIBRARIES ################################################################
+library(tidyverse)
+library(ggplot2)
+###############################################################################
+
+#### FILEPATHS ################################################################
+dir_input_eems <- file.path("/Users", "kbg", "Documents", "UC_Berkeley", "EEA_DOC", "Aqualog_EEMs", "PARAFAC_KBG", "EEMs_Raw")
+dir_output <- file.path("/Users", "kbg", "Documents", "UC_Berkeley", "EEA_DOC", "Aqualog_EEMs", "PARAFAC_KBG", "Summary_Data")
+
+###############################################################################
+
+#### FILENAMES OF ALL PROCESSED CONTOUR .DAT FILES
+# Initialize empty vectors
+dirs.sample <- list.dirs(dir_input_eems, recursive = FALSE)
+file.names <- as.character(NULL)
+
+for(folder in seq(1:length(dirs.sample))){
+  file_path <- file.path(dirs.sample[folder], "data_export")
+  file.names <- c(file.names, list.files(pattern="*Processed Contour_ IFE_RM_NRM.dat", path= file_path, full.names= TRUE))
+}
+
+#### EXTRACT EX AND EM WAVELENGTHS
+
+# Initialized data frames to store unique ex and em wavelength values
+#ex.df <- tibble(sampleID= as.character(NULL), ex= as.numeric(NULL))
+#em.df <- tibble(sampleID= as.character(NULL), em= as.numeric(NULL))
+
+# # Loop over files
+#  for(f in seq(1:length(file.names))){
+#    # Read in each file and round the emission wavelengths
+#    eem.df <- read_table2(file.names[f], skip= 3, col_names = FALSE) %>%
+#      rename(ex= X1, em= X2, z= X3)
+#
+#  ## Run loop and save the column names
+#    # Extract unique sampleID from file path
+#    sampleID <- gsub("(^.*/)|( .*$)", "", file.names[f])
+#
+#    # Extend data frame with the unique ex or em wavelength values for a sample
+#    ex.df <- rbind(ex.df, tibble(sampleID= rep(sampleID, length(unique(eem.df$ex))),
+#                                 ex.uq= unique(eem.df$ex)))
+#    em.df <- rbind(em.df, tibble(sampleID= rep(sampleID, length(unique(eem.df$em))),
+#                                 em.uq= unique(eem.df$em)))
+#
+# }
+
+# WRITE data frames to tsv file
+# write_tsv(eem.df, path= file.path(dir_output, "eem_rounded.tsv"))
+# write_tsv(ex.df, path= file.path(dir_output, "ex.df.tsv"))
+# write_tsv(em.df, path= file.path(dir_output, "em.df.tsv"))
+
+#### INVESTIGATE THE DISTRIBUTION OF EX AND EM WAVELENGTHS AMONG FILES
+eem.df <- read_table2(file.path(dir_output, "eem_rounded.tsv"))
+ex.df <- read_table2(file.path(dir_output, "ex.df.tsv"))
+em.df <- read_table2(file.path(dir_output, "em.df.tsv"))
+
+
+ggplot(ex.df, aes(x= ex.uq)) +
+  geom_histogram() +
+  theme_bw()
+
+ggplot(em.df, aes(x= em.uq)) +
+  geom_histogram() +
+  theme_bw()
+
+
+## EMISSIONS WAVELENGTHS
+em.min.max <- em.df %>%
+                group_by(sampleID) %>%
+                summarize(em.min= min(em.uq),
+                          em.max= max(em.uq))
+em.min.max %>%
+  count(em.min)
+em.min.max %>%
+  count(em.max)
+
+## This is the aberant site, remove from future analyses
+# a1607_FOXC_EMP_2 <- read_table2(file.names[grep("1607_FOXC_EMP_2", file.names)],
+#                               skip= 3, col_names = FALSE)
+
+## Investigate differences between different EM measurement wavelengths
+em.diff <- em.df %>%
+              group_by(sampleID) %>%
+              mutate(nm.diff= em.uq - lag(em.uq)) %>%
+              filter(is.na(nm.diff) == FALSE)
+
+em.diff.count <- em.diff %>%
+  filter(sampleID != "1607_FOXC_EMP_2") %>%
+  count(nm.diff)
+
+summary(em.diff.count$nm.diff)
+
+em.diff.count %>%
+ggplot(aes(x= nm.diff)) + geom_histogram() + theme_bw()
+
+
+## EXCITATION WAVELENGTHS
+ex.min.max <- ex.df %>%
+  group_by(sampleID) %>%
+  summarize(ex.min= min(ex.uq),
+            ex.max= max(ex.uq))
+
+ex.min.max %>%
+  count(ex.min)
+ex.min.max %>%
+  count(ex.max)
+
+ex.diff <- ex.df %>%
+  group_by(sampleID) %>%
+  mutate(nm.diff= ex.uq - lag(ex.uq)) %>%
+  filter(is.na(nm.diff) == FALSE)
+
+ggplot(ex.diff, aes(x= nm.diff)) + geom_histogram() + theme_bw()
+
+ex.diff.3 <- ex.diff %>%
+          filter(nm.diff == -3)
+unique(ex.diff.3$sampleID)
+length(unique(ex.diff.3$sampleID))
+
+ex.diff.1 <- ex.diff %>%
+  filter(nm.diff == -1)
+unique(ex.diff.1$sampleID)
+length(unique(ex.diff.1$sampleID))
+
+ex.diff.3.count <- ex.diff.3 %>%
+  group_by(ex.uq) %>%
+  count(ex.uq) %>%
+  ggplot() + geom_histogram(aes(x= n))
+
+ex.wavelengths <- seq(240, 600, by= 3)
+
+
+
+a1607_ELDC_EMP_1 <- read_table2(file.names[grep("1607_ELDC_EMP_1", file.names)],
+skip= 3, col_names = FALSE) %>% rename(ex= X1, em= X2, z= X3)
+
+test <- a1607_ELDC_EMP_1[which(a1607_ELDC_EMP_1$ex %in% ex.wavelengths), ]
+
+
+
+
+
+
+
+
+
+
+```
