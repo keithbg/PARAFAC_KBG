@@ -1,0 +1,6 @@
+aqualog data (EEM_Raw)
+...wavelength_3nm_subset.R #subsets the EEM by wavelength to make dataset resolution uniform [EEMs_EX_3nm]
+...integration_gain_corrections.R #corrects for gain and dilution ["_corrected]
+...pseudoreplicate_subset.R #outputs subset list of sample names, one sample tested from each loc/time. applies to samples only (not end members)
+eem_sample_subset.sh #removes pseudoreplicates (samples only, not end members) ["_subset]
+
