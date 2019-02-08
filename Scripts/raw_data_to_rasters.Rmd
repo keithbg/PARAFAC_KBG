@@ -1,0 +1,49 @@
+---
+title: "raw data to rasters"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(raster)
+```
+
+### Import data
+
+```{r message=FALSE, warning=FALSE}
+
+raw <- list.files("../EEms_Raw", recursive = TRUE)
+
+raw <- raw[str_detect(raw, "data_export/.*Processed Graph")]
+
+data <- list()
+
+for (i in 1:length(raw)) {
+  data[[i]] <- read_tsv(paste0("../EEms_Raw/", raw[i]), skip = 3, col_names = FALSE)
+  names(data)[i] <- raw[i]
+}
+
+```
+
+### Fix column names
+
+```{r}
+
+data <- lapply(data, setNames, nm = c("wavelength", seq(600, 240, -3)))
+
+```
+
+### Orient matrix correctly and generate raster
+
+```{r }
+
+rasters <- lapply(data, function(x) raster(data.matrix(x[250:1,122:2]), xmn=240, xmx = 600, ymn = 212, ymx = 620))
+
+rasStack <-stack(rasters)
+
+animate(rasStack, zlim = c(-1, 4), pause = .05, n = 1)
+
+```
+
