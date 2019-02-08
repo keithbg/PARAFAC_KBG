@@ -1,5 +1,5 @@
 ---
-title: "raw data to rasters"
+title: "processed data to rasters"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -14,15 +14,13 @@ library(raster)
 
 ```{r message=FALSE, warning=FALSE}
 
-raw <- list.files("EEms_Raw", recursive = TRUE)
-
-raw <- raw[str_detect(raw, "data_export/.*Processed Graph")]
+processed <- list.files("EEMs_EX_3nm_corrected_subset")
 
 data <- list()
 
-for (i in 1:length(raw)) {
-  data[[i]] <- read_tsv(paste0("../EEms_Raw/", raw[i]), skip = 3, col_names = FALSE)
-  names(data)[i] <- raw[i]
+for (i in 1:length(processed)) {
+  data[[i]] <- read_tsv(paste0("../EEMS_EX_3nm_corrected_subset/", processed[i]), skip = 0, col_names = TRUE)
+  names(data)[i] <- processed[i]
 }
 
 ```
