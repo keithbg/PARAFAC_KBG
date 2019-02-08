@@ -25,23 +25,53 @@ for (i in 1:length(processed)) {
 
 ```
 
-### Fix column names
+### trim data
 
 ```{r}
 
-data <- lapply(data, setNames, nm = c("wavelength", seq(600, 240, -3)))
+trim <- lapply(data, function(x) filter(x, 
+                                        em>.95*ex+50, 
+                                        em<2*ex-30,
+                                        ex>245))
 
 ```
 
-### Orient matrix correctly and generate raster
+### sample names
 
-```{r }
+```{r}
 
-rasters <- lapply(data, function(x) raster(data.matrix(x[250:1,122:2]), xmn=240, xmx = 600, ymn = 212, ymx = 620))
+names <- str_extract(processed, pattern = ".*\\-") %>%
+  str_sub(end = -2)
 
-rasStack <-stack(rasters)
+```
 
-animate(rasStack, zlim = c(-1, 4), pause = .05, n = 1)
+### Generate rasters
+
+```{r}
+
+plots <- list()
+
+for (i in 1:length(trim)) {
+  plots[[i]] <- ggplot(trim[[i]], aes(x = ex, y = em, z = z, fill = z, color = z)) +
+  geom_tile() +
+  scale_fill_continuous(type = "viridis") +
+  scale_colour_continuous(type = "viridis") +
+  geom_contour(color = "yellow", alpha = .3) +
+  ggtitle(names[i]) +
+  coord_fixed()
+}
+
+```
+
+### Export images
+
+NOTE: I intentionally deleted the eems/ folder after combining the pdfs. If you want to save theses somewhere, designate the folder in the path below.
+
+```{r}
+
+for (i in 1:length(plots)) {
+  ggsave(paste0("eems/",names[i], ".pdf"), plots[[i]], width = 8, height = 9)
+}
 
 ```
 
