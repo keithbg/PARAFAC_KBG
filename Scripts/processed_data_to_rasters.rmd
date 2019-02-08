@@ -14,7 +14,7 @@ library(raster)
 
 ```{r message=FALSE, warning=FALSE}
 
-processed <- list.files("EEMs_EX_3nm_corrected_subset")
+processed <- list.files("../EEMs_EX_3nm_corrected_subset")
 
 data <- list()
 

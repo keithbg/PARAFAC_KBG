@@ -14,7 +14,7 @@ library(raster)
 
 ```{r message=FALSE, warning=FALSE}
 
-raw <- list.files("EEms_Raw", recursive = TRUE)
+raw <- list.files("../EEms_Raw", recursive = TRUE)
 
 raw <- raw[str_detect(raw, "data_export/.*Processed Graph")]
 
@@ -40,6 +40,16 @@ data <- lapply(data, setNames, nm = c("wavelength", seq(600, 240, -3)))
 ```{r }
 
 rasters <- lapply(data, function(x) raster(data.matrix(x[250:1,122:2]), xmn=240, xmx = 600, ymn = 212, ymx = 620))
+
+```
+
+### For the purpose of getting a rough idea of the raw data, min-max normalize
+
+
+
+### Plot/animate
+
+```{r}
 
 rasStack <-stack(rasters)
 
