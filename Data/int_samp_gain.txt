@@ -1,0 +1,20 @@
+aqualog_date	yr_mo	int_gain	int_area	samp_gain
+11-Aug-16	21-May-04	low	11413.1167	low
+12-Aug-16		low	11628.40477	low
+19-Aug-16		low	11499.41688	low
+3-Oct-16		low	12168.15767	low
+6-Oct-16		low	11832.13121	low
+12-Oct-16		low	11977.48575	low
+16-Oct-16		low	11886.13194	low
+11-Apr-17		low	12028.4453	low
+20-May-17		low	12472.50061	low
+15-Mar-16		med	24621.50091	low
+16-Mar-16		med	24742.65427	low
+26-Apr-16		med	25109.75272	low
+27-Apr-16		med	25703.63511	low
+1-Jun-16		med	24761.48839	low
+6-Jul-16		med	23870.69652	low
+16-Jun-17		med	25176.70495	med
+15-Jul-17		med	24257.30574	med
+21-Aug-17		med	21582.17126	med
+21-Sep-17		med	22447.99945	med

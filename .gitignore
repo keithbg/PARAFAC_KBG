@@ -5,3 +5,9 @@ PARAFAC_KBG.Rproj
 Scripts/.Rhistory
 .Rhistory
 .directory
+Data/EEMs_Raw
+Data/EEMS_EX_3nm_corrected_subset
+Data/EEMS_EX_3nm_corrected
+Data/EEMs_EX_3nm
+Data/EEMs_Errors
+Data/Matlab_output
