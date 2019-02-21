@@ -16,50 +16,69 @@ library(raster)
 
 raw <- list.files("../EEms_Raw", recursive = TRUE)
 
-raw <- raw[str_detect(raw, "data_export/.*Processed Graph")]
+raw <- raw[str_detect(raw, "data_export/.*Processed Contour")]
 
 data <- list()
 
 for (i in 1:length(raw)) {
   data[[i]] <- read_tsv(paste0("../EEms_Raw/", raw[i]), skip = 3, col_names = FALSE)
-  names(data)[i] <- raw[i]
+  colnames(data[[i]]) <- c("ex", "em", "z")
+  names(data)[i] <- str_replace_all(raw[i], "\\/", "X")
 }
-d
+
 ```
 
-### Fix column names
+### trim data
 
 ```{r}
 
-data <- lapply(data, setNames, nm = c("wavelength", seq(600, 240, -3)))
+trim <- lapply(data, function(x) filter(x, 
+                                        em>.95*ex+50, 
+                                        em<2*ex-30,
+                                        ex>245))
 
 ```
 
-### Orient matrix correctly and generate raster
-
-```{r }
-
-rasters <- lapply(data, function(x) raster(data.matrix(x[250:1,122:2]), xmn=240, xmx = 600, ymn = 212, ymx = 620))
-
-```
-
-### For the purpose of getting a rough idea of the raw data, min-max normalize
+### sample names
 
 ```{r}
 
-norm <- lapply(rasters, function(x) (x-x@data@min)/(x@data@max-x@data@min))
+names <- str_replace_all(raw, "\\/", "X") %>%
+  str_extract(pattern = ".*\\-") %>%
+  str_sub(end = -3)
 
 ```
 
-
-### Plot/animate
+### Generate rasters
 
 ```{r}
 
-rasStack <-stack(norm)
+plots <- list()
 
-animate(rasStack, zlim = c(0,1), pause = .05, n = 1)
+for (i in 1:length(trim)) {
+  plots[[i]] <- ggplot(trim[[i]], aes(x = ex, y = em, z = z, fill = z, color = z)) +
+  geom_tile() +
+  scale_fill_continuous(type = "viridis") +
+  scale_colour_continuous(type = "viridis") +
+  geom_contour(color = "yellow", alpha = .3) +
+  ggtitle(names[i]) +
+  coord_fixed()
+}
 
 ```
 
-Where I left off: This method works best in the RStudio console (using the plot window to view lots of plots). The plots from 1607_ELDC_EMP_1 onwards get squeezed into the top of the frame. Is this because the raw data was not standardized for increment? I'll move on to working with the processed data for now, but it might be worth eventually returning to this script to fix that.
+### Export images
+
+NOTE: I intentionally deleted the eems/ folder after combining the pdfs. If you want to save these somewhere, designate the folder in the path below.
+
+```{r}
+
+for (i in 1:length(plots)) {
+  ggsave(paste0("eems/",names[i], ".pdf"), plots[[i]], width = 8, height = 9)
+}
+
+```
+
+
+
+

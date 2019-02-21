@@ -1,0 +1,65 @@
+---
+title: "parafac"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(staRdom)
+library(reshape2)
+```
+
+### Import data
+
+```{r message=FALSE, warning=FALSE}
+
+processed <- list.files("../EEMs_EX_3nm_corrected_subset")
+
+data <- list()
+
+for (i in 1:length(processed)) {
+  data[[i]] <- read_tsv(paste0("../EEMS_EX_3nm_corrected_subset/", processed[i]), skip = 0, col_names = TRUE)
+  
+  names(data)[i] <- processed[i]
+  
+  data[[i]] <- data[[i]] %>%
+    arrange(ex, em)
+  
+}
+
+```
+
+### trim data
+
+```{r}
+
+trim <- lapply(data, function(x) filter(x, 
+                                        em>.95*ex+50, 
+                                        em<2*ex-30,
+                                        ex>245))
+
+```
+
+### reshape data
+
+```{r}
+
+eem_list_j <- list()
+
+for (i in 1:length(trim)) {
+  
+  temp <- list()
+  
+  temp$sample <- str_sub(names(trim)[i],end = 16)
+  temp$ex <- unique(trim[[i]]$ex)
+  temp$em <- unique(trim[[i]]$em)
+  temp$x <- as.matrix(dcast(trim[[i]], formula = ex~em)[,2:206])
+  
+  eem_list_j[[i]] <- temp
+  
+}
+
+```
+
