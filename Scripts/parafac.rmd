@@ -9,7 +9,7 @@ library(staRdom)
 
 ```{r}
 
-eems <- eem_read_csv(path = "parafac struggles", 
+eems <- eem_read_csv(path = "../Data/corrected csvs 190221", 
                      is_blank_corrected = TRUE,
                      is_scatter_corrected = TRUE,
                      is_ife_corrected = TRUE,
