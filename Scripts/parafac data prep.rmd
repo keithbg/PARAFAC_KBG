@@ -1,0 +1,75 @@
+---
+title: "parafac data prep"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+
+library(tidyverse)
+library(staRdom)
+
+```
+
+### Import data
+
+```{r message=FALSE, warning=FALSE}
+
+processed <- list.files("../EEMs_EX_3nm_corrected_subset")
+
+data <- list()
+
+for (i in 1:length(processed)) {
+  data[[i]] <- read_tsv(paste0("../EEMS_EX_3nm_corrected_subset/", processed[i]), skip = 0, col_names = TRUE)
+  names(data)[i] <- processed[i]
+}
+
+```
+
+### trim data
+
+```{r}
+
+trim <- lapply(data, function(x) filter(x, 
+                                        em>.95*ex+50, 
+                                        em<2*ex-30,
+                                        ex>245))
+
+```
+
+### sample names
+
+```{r}
+
+names <- str_extract(processed, pattern = ".*\\-") %>%
+  str_sub(end = -2)
+
+```
+
+### write to .csv (to appease staRdom)
+
+```{r}
+
+temp <- trim[[1]] %>%
+  spread(key = ex, value = z)
+
+temp <- rbind(colnames(temp), temp)
+
+temp[1,1] <- NA
+
+for (i in 1:length(trim)) {
+  
+  temp <- trim[[i]] %>%
+    spread(key = ex, value = z)
+  
+  temp <- rbind(colnames(temp), temp)
+  
+  temp[1,1] <- NA
+  
+  write_csv(temp, paste0("parafac struggles/", names[i], ".csv"), col_names = FALSE, append = FALSE)
+  
+}  
+
+```
+

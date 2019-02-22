@@ -8,7 +8,7 @@
 %The input EEMs can be in any directory, and the input Excel file can also
 %be in any directory. 
 
-DOMFluor %Check to make sure DOMFluor package is loaded
+%DOMFluor %Check to make sure DOMFluor package is loaded
 
 % Clear out workspace
 clear
@@ -19,12 +19,9 @@ close all
 
 %% INPUTS
 
-% Set current directory
-cd '/Users/KeithBG/Documents/UC Berkeley/2016 Spring Classes/EEA_DOC/Aqualog_EEMs/Scripts/'
-
-EEMdir = '/Users/KeithBG/Documents/UC Berkeley/2016 Spring Classes/EEA_DOC/Aqualog_EEMs/Aqualog_Data/EEMS_EX_3nm_corrected_subset/'; %Insert the directory for the EEMs here
+EEMdir = 'C:/Users/!j.wingenroth/Documents/PARAFAC_KBG/EEMS_EX_3nm_corrected_subset'; %Insert the directory for the EEMs here
 % OLD inputSS = '/Users/KeithBG/Documents/UC Berkeley/2016 Spring Classes/EEA_DOC/Aqualog_EEMs/Aqualog_Data/NEED TO CHANGE FOR SUBSET FILESinput_eem_filenames.xlsx'; %Insert complete filename of input spreadsheet
- inputSS = '/Users/KeithBG/Documents/UC Berkeley/2016 Spring Classes/EEA_DOC/Aqualog_EEMs/Aqualog_Data/eem_sample_list_subset.txt'; %Insert complete filename of input spreadsheet
+ inputSS = 'C:/Users/!j.wingenroth/Documents/PARAFAC_KBG/EEMS_EX_3nm_corrected_subset/Data/eem_sample_list_subset.txt'; %Insert complete filename of input spreadsheet
  sheetname = 'sample_names'; %Insert name of the appropriate sheet of the above spreadsheet. Usually this will just be 'Sheet1'
 groups = 1; %Number of pre-designated groups for split-half analysis. If you want the code to do this automatically, set it to one. Otherwise, if you have designated groups in column O of the spreadsheet, it should be 2.
 lastrow = 232; %Last sample row on inpust spreadsheet

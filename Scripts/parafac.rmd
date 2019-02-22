@@ -1,65 +1,35 @@
 ---
 title: "parafac"
 output: html_document
-editor_options: 
-  chunk_output_type: console
 ---
 
 ```{r}
-library(tidyverse)
 library(staRdom)
-library(reshape2)
 ```
-
-### Import data
-
-```{r message=FALSE, warning=FALSE}
-
-processed <- list.files("../EEMs_EX_3nm_corrected_subset")
-
-data <- list()
-
-for (i in 1:length(processed)) {
-  data[[i]] <- read_tsv(paste0("../EEMS_EX_3nm_corrected_subset/", processed[i]), skip = 0, col_names = TRUE)
-  
-  names(data)[i] <- processed[i]
-  
-  data[[i]] <- data[[i]] %>%
-    arrange(ex, em)
-  
-}
-
-```
-
-### trim data
 
 ```{r}
 
-trim <- lapply(data, function(x) filter(x, 
-                                        em>.95*ex+50, 
-                                        em<2*ex-30,
-                                        ex>245))
+eems <- eem_read_csv(path = "parafac struggles", 
+                     is_blank_corrected = TRUE,
+                     is_scatter_corrected = TRUE,
+                     is_ife_corrected = TRUE,
+                     is_raman_normalized = TRUE,
+                     manufacturer = "Horiba")
 
 ```
 
-### reshape data
+```{r}
+
+model <- eem_parafac(eems, comps = 3:8, normalise = FALSE)
+
+model_norm <- eem_parafac(eems, comps = 3:8, normalise = TRUE)
+
+```
+
 
 ```{r}
 
-eem_list_j <- list()
-
-for (i in 1:length(trim)) {
-  
-  temp <- list()
-  
-  temp$sample <- str_sub(names(trim)[i],end = 16)
-  temp$ex <- unique(trim[[i]]$ex)
-  temp$em <- unique(trim[[i]]$em)
-  temp$x <- as.matrix(dcast(trim[[i]], formula = ex~em)[,2:206])
-  
-  eem_list_j[[i]] <- temp
-  
-}
+eempf_compare(model)
 
 ```
 
