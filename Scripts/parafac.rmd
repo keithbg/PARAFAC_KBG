@@ -31,5 +31,7 @@ model_norm <- eem_parafac(eems, comps = 3:8, normalise = TRUE)
 
 eempf_compare(model)
 
+eempf_compare(model_norm)
+
 ```
 
