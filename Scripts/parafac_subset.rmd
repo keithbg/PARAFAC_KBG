@@ -1,0 +1,37 @@
+---
+title: "parafac"
+output: html_document
+---
+
+```{r}
+library(staRdom)
+```
+
+```{r}
+
+eems <- eem_read_csv(path = "../Data/corrected csvs 190221", 
+                     is_blank_corrected = TRUE,
+                     is_scatter_corrected = TRUE,
+                     is_ife_corrected = TRUE,
+                     is_raman_normalized = TRUE,
+                     manufacturer = "Horiba")
+
+```
+
+```{r}
+
+model <- eem_parafac(eems, comps = 3:8, normalise = FALSE)
+
+model_norm <- eem_parafac(eems, comps = 3:8, normalise = TRUE)
+
+```
+
+
+```{r}
+
+eempf_compare(model)
+
+eempf_compare(model_norm)
+
+```
+
