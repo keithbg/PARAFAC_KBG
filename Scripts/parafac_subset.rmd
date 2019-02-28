@@ -62,3 +62,67 @@ eempf_compare(model_smp)
 ```
 
 # outlier removal #1
+
+```{r}
+
+# EM-ONLY
+
+lev_em <- eempf_leverage(model_em[[4]]) # 6 components
+
+eempf_leverage_plot(lev_em)
+
+eems_em_subset <- eem_exclude(eems_em, exclude = list("sample" = c("1605_FOXC_EML_1", "1605_SFMD_EML_1")))
+
+# NON-NORMALIZED
+
+lev_nn <- eempf_leverage(model[[4]]) # 6 components
+
+eempf_leverage_plot(lev_nn)
+
+eems_nn_subset <- eem_exclude(eems, exclude = list("sample" = c("1605_FOXC_EML_1", "1605_SFMD_EML_1")))
+
+# NORMALIZED
+
+lev_n <- eempf_leverage(model_norm[[4]]) # 6 components
+
+eempf_leverage_plot(lev_n)
+
+eems_n_subset <- eem_exclude(eems, exclude = list("ex" = c(246, 249, 252)))
+
+# SAMPLES-ONLY
+
+lev_s <- eempf_leverage(model_smp[[3]]) # 5 components
+
+eempf_leverage_plot(lev_s)
+
+eems_s_subset <- eem_exclude(eems_smp, exclude = list("em" = c(294.941, 304.573), "ex" = c(246, 249), "sample" = c("1610_SFSI_SMP_2", "1603_SFMD_SMP_1")))
+
+```
+
+# model run #2
+
+```{r}
+
+model2 <- eem_parafac(eems_nn_subset, comps = 3:6, normalise = FALSE)
+
+model_norm2 <- eem_parafac(eems_n_subset, comps = 3:6, normalise = TRUE)
+
+model_em2 <- eem_parafac(eems_em_subset, comps = 3:6, normalise = FALSE)
+
+model_smp <- eem_parafac(eems_s_subset, comps = 3:6, normalise = FALSE)
+
+```
+
+# model comparison #2
+
+```{r}
+
+eempf_compare(model_em)
+
+eempf_compare(model2)
+
+eempf_compare(model_norm2)
+
+eempf_compare(model_smp2)
+
+```
