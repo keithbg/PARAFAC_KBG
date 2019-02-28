@@ -1,11 +1,18 @@
 ---
 title: "parafac"
 output: html_document
+  toc: true
+  toc_depth: 2
 ---
+
+# libraries
 
 ```{r}
 library(staRdom)
+library(tidyverse)
 ```
+
+# data prep
 
 ```{r}
 
@@ -16,22 +23,42 @@ eems <- eem_read_csv(path = "../Data/corrected csvs 190221",
                      is_raman_normalized = TRUE,
                      manufacturer = "Horiba")
 
+eems_smp <- eems[sapply(eems, function(x) str_detect(x$sample, "SMP"))]
+
+class(eems_smp) <- "eemlist"
+
+eems_em <- eems[sapply(eems, function(x) str_detect(x$sample, "EM"))]
+
+class(eems_em) <- "eemlist"
+
 ```
+
+# model run #1
 
 ```{r}
 
-model <- eem_parafac(eems, comps = 3:8, normalise = FALSE)
+model <- eem_parafac(eems, comps = 3:6, normalise = FALSE)
 
-model_norm <- eem_parafac(eems, comps = 3:8, normalise = TRUE)
+model_norm <- eem_parafac(eems, comps = 3:6, normalise = TRUE)
+
+model_em <- eem_parafac(eems_em, comps = 3:6, normalise = FALSE)
+
+model_smp <- eem_parafac(eems_smp, comps = 3:6, normalise = FALSE)
 
 ```
 
+# model comparison #1
 
 ```{r}
+
+eempf_compare(model_em)
 
 eempf_compare(model)
 
 eempf_compare(model_norm)
 
+eempf_compare(model_smp)
+
 ```
 
+# outlier removal #1
