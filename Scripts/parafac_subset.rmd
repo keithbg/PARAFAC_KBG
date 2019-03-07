@@ -33,7 +33,7 @@ class(eems_em) <- "eemlist"
 
 ```
 
-# model run #1
+# model run 0.0
 
 ```{r}
 
@@ -47,7 +47,7 @@ model_smp <- eem_parafac(eems_smp, comps = 3:6, normalise = FALSE)
 
 ```
 
-# model comparison #1
+# model comparison 0.0
 
 ```{r}
 
@@ -61,7 +61,7 @@ eempf_compare(model_smp)
 
 ```
 
-# outlier removal #1
+# outlier removal 0.0
 
 ```{r}
 
@@ -99,7 +99,7 @@ eems_s_subset <- eem_exclude(eems_smp, exclude = list("em" = c(294.941, 304.573)
 
 ```
 
-# model run #2
+# model run 0.1
 
 ```{r}
 
@@ -109,15 +109,15 @@ model_norm2 <- eem_parafac(eems_n_subset, comps = 3:6, normalise = TRUE)
 
 model_em2 <- eem_parafac(eems_em_subset, comps = 3:6, normalise = FALSE)
 
-model_smp <- eem_parafac(eems_s_subset, comps = 3:6, normalise = FALSE)
+model_smp2 <- eem_parafac(eems_s_subset, comps = 3:6, normalise = FALSE)
 
 ```
 
-# model comparison #2
+# model comparison 0.1
 
 ```{r}
 
-eempf_compare(model_em)
+eempf_compare(model_em2)
 
 eempf_compare(model2)
 
@@ -125,4 +125,10 @@ eempf_compare(model_norm2)
 
 eempf_compare(model_smp2)
 
+eempf_cortable(model_norm2[[1]])
+
+eempf_cortable(model_em2[[3]])
+
 ```
+
+There is a lot of correlation between these components. I'm going to go back to the original data and run some more intensive models with higher component numbers. I'm going to try a new combination: normalizing the end-member subset.

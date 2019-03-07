@@ -1,0 +1,223 @@
+---
+title: "parafac improvements"
+output: html_document
+  toc: true
+  toc_depth: 2
+---
+
+# preface
+
+Goals:
+
+- More robust PARAFAC (con: more computationally intensive)
+
+- Physically reasonable results
+
+# libraries
+
+```{r}
+library(staRdom)
+library(tidyverse)
+```
+
+# data prep
+
+```{r}
+
+eems <- eem_read_csv(path = "../Data/corrected csvs 190221", 
+                     is_blank_corrected = TRUE,
+                     is_scatter_corrected = TRUE,
+                     is_ife_corrected = TRUE,
+                     is_raman_normalized = TRUE,
+                     manufacturer = "Horiba")
+
+eems_smp <- eems[sapply(eems, function(x) str_detect(x$sample, "SMP"))]
+
+class(eems_smp) <- "eemlist"
+
+eems_em <- eems[sapply(eems, function(x) str_detect(x$sample, "EM"))]
+
+class(eems_em) <- "eemlist"
+
+```
+
+# model run 0.0
+
+```{r}
+
+pf_0_all <- eem_parafac(eems, comps = 4:10, maxit = 5000, normalise = TRUE,
+                        nstart = 15, ctol = 2e-5)
+
+pf_0_non <- eem_parafac(eems, comps = 4:10, maxit = 5000, normalise = FALSE,
+                        nstart = 15, ctol = 2e-5)
+
+pf_0_em <- eem_parafac(eems_em, comps = 4:10, maxit = 5000, normalise = TRUE,
+                       nstart = 15, ctol = 2e-5)
+
+```
+
+# model comparison 0.0
+
+```{r}
+
+eempf_compare(pf_0_all)
+
+eempf_compare(pf_0_non)
+
+eempf_compare(pf_0_em)
+
+```
+
+# model truthing 0.0
+
+```{r}
+
+eempf_corplot(pf_0_all[[5]]) #8 comp.
+
+eempf_corplot(pf_0_non[[1]]) #4 comp.
+
+eempf_corplot(pf_0_em[[4]])  #7 comp.
+
+```
+
+# outlier selection 0.0
+
+```{r}
+
+all8lev <- eempf_leverage(pf_0_all[[5]])
+
+non4lev <- eempf_leverage(pf_0_non[[1]])
+
+em7lev <- eempf_leverage(pf_0_em[[4]])
+
+eempf_leverage_plot(all8lev, qlabel = .1)
+
+eempf_leverage_plot(non4lev, qlabel = .1)
+
+eempf_leverage_plot(em7lev, qlabel = .1)
+
+```
+
+# outlier removal 0.0
+
+```{r}
+
+eems_all8 <- eem_exclude(eems, exclude = list("em" = c(541.27, 301.36, 319.063, 
+                                                       317.451),
+                                              "ex" = c(246, 249),
+                                              "sample" = c("1604_FOXC_EMP_2", 
+                                                           "1607_SFPR_EMR_1")
+                                              )
+                         )
+
+eems_non4 <- eem_exclude(eems, exclude = list("sample" = c("1605_SFMD_EML_1",
+                                                           "1608_ELDC_EMP_1",
+                                                           "1605_SFSI_EML_1",
+                                                           "1605_FOXC_EML_1",
+                                                           "1605_REDC_EML_1")
+                                              )
+                         )
+
+eems_em7 <- eem_exclude(eems_em, exclude = list("em" = 541.27,
+                                                "ex" = c(246, 249),
+                                                "sample" = c("1607_SFMG_EMY_1",
+                                                             "1607_SFPR_EMR_1",
+                                                             "1605_SFMD_EML_1")
+                                                )
+                        )
+
+```
+
+# model run 1.0
+
+```{r}
+
+pf_1_all <- eem_parafac(eems_all8, comps = 4:10, normalise = TRUE)
+
+pf_1_non <- eem_parafac(eems_non4, comps = 4:10, normalise = FALSE)
+
+pf_1_em <- eem_parafac(eems_em7, comps = 4:10, normalise = TRUE)
+
+```
+
+# model comparison 1.0
+
+```{r}
+
+eempf_compare(pf_1_all)
+
+eempf_compare(pf_1_non)
+
+eempf_compare(pf_1_em)
+
+```
+
+# model truthing 1.0
+
+```{r}
+
+eempf_corplot(pf_1_all[[5]]) #8 comp.
+
+eempf_corplot(pf_1_non[[1]]) #4 comp.
+
+eempf_corplot(pf_1_em[[3]])  #6 comp.
+
+```
+
+# outlier selection 1.0
+
+```{r}
+
+all8lev <- eempf_leverage(pf_1_all[[5]])
+
+non4lev <- eempf_leverage(pf_1_non[[1]])
+
+em6lev <- eempf_leverage(pf_1_em[[3]])
+
+eempf_leverage_plot(all8lev, qlabel = .1)
+
+eempf_leverage_plot(non4lev, qlabel = .1)
+
+eempf_leverage_plot(em6lev, qlabel = .1)
+
+```
+
+# outlier removal 1.0
+
+```{r}
+
+eems_all8 <- eem_exclude(eems_all8, 
+                         exclude = list("ex" = c(252, 255),
+                                        "sample" = c("1607_SFMG_EMY_1")))
+                      
+eems_non4 <- eem_exclude(eems_non4, 
+                         exclude = list("sample" = c("1605_SFMG_EML_1",
+                                                     "1608_FOXC_EMP_1",
+                                                     "1608_SFMD_EML_1",
+                                                     "1608_SFMG_EML_1")))
+               
+eems_em6 <- eem_exclude(eems_em7, exclude = list("ex" = c(252, 255)))
+                        
+```
+
+# model run 2.0
+
+```{r}
+
+pf_2_all <- eem_parafac(eems_all8, comps = 4:10, normalise = TRUE)
+
+pf_2_non <- eem_parafac(eems_non4, comps = 4:10, normalise = FALSE)
+
+pf_2_em <- eem_parafac(eems_em6, comps = 4:10, normalise = TRUE)
+
+```
+
+# model comparison 2.0
+
+```{r fig.width= 6, fig.height = 10}
+
+eempf_compare(pf_2_all[3])
+
+save(pf_2_all, file = "best_parafac_3_6.RData")
+
+```
