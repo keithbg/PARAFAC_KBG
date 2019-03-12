@@ -34,7 +34,10 @@ for (i in 1:length(processed)) {
 trim <- lapply(data, function(x) filter(x, 
                                         em>.95*ex+50, 
                                         em<2*ex-30,
-                                        ex>245))
+                                        ex>245,
+                                        em<(-.5*ex)+750)) #remove component 6
+                                                        #which had 0 openfluor
+                                                        #matches
 
 ```
 
@@ -67,7 +70,7 @@ for (i in 1:length(trim)) {
   
   temp[1,1] <- NA
   
-  write_csv(temp, paste0("parafac struggles/", names[i], ".csv"), col_names = FALSE, append = FALSE)
+  write_csv(temp, paste0("../Data/corrected csvs 190311/", names[i], ".csv"), col_names = FALSE, append = FALSE)
   
 }  
 
