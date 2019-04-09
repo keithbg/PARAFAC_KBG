@@ -1,0 +1,22 @@
+4/9/19
+
+outliers removed:
+
+samples:
+
+'1607_SFPR_EMR_1', 
+'1605_SFMG_EML_1', 
+'1608_SFMG_EML_1',
+'1605_REDC_EML_1', 
+'1605_SFMD_EML_1', 
+'1605_SFCD_EML_1'
+
+ex:
+
+246,
+249,
+252
+
+em:
+
+541.27

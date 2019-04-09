@@ -418,7 +418,14 @@ eems <- eem_read_csv(path = "../Data/corrected csvs 190311",
 
 ```{r}
 
-eems2 <- eem_exclude(eems, list('em' = 541.27, 'ex' = c(246, 249, 252), 'sample' = c('1607_SFPR_EMR_1','1605_SFMG_EML_1','1608_SFMG_EML_1','1605_REDC_EML_1','1605_SFMD_EML_1','1605_SFCD_EML_1')))
+eems2 <- eem_exclude(eems, list('em' = 541.27,
+                                'ex' = c(246, 249, 252), 
+                                'sample' = c('1607_SFPR_EMR_1', 
+                                             '1605_SFMG_EML_1', 
+                                             '1608_SFMG_EML_1',
+                                             '1605_REDC_EML_1', 
+                                             '1605_SFMD_EML_1', 
+                                             '1605_SFCD_EML_1')))
 
 ```
 
@@ -448,7 +455,8 @@ splithalf_plot(sh_2)
 
 ```{r}
 
-pf_0 <- eem_parafac(eems2, comps = 4, maxit = 10000, normalise = TRUE, nstart = 20, ctol = 10^-5, verbose = TRUE)
+pf_0 <- eem_parafac(eems2, comps = 4, maxit = 10000, normalise = TRUE, 
+                    nstart = 20, ctol = 10^-5, verbose = TRUE)
 
 eempf_compare(pf_0)
 
