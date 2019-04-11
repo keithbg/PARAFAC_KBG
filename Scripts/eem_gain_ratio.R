@@ -13,11 +13,12 @@ library(tidyverse)
 ###############################################################################
 
 #### FILEPATHS ################################################################
-dir_input <- file.path("/Users", "kbg", "Documents", "UC_Berkeley", "EEA_DOC", "Aqualog_EEMs", "PARAFAC_KBG")
+dir_input <- getwd()
 ###############################################################################
 
 #### READ IN SAMPLE LIST AND CREATE DATA FRAME OF UNIQUE INTEGRATION AREAS
-gain.data <- read_tsv(file.path(dir_input, "aqualog_gain_data.txt"))
+#gain.data <- read_tsv(file.path(dir_input, "Data", "aqualog_gain_data.txt"))
+#read_tsv("Data/aqualog_gain_data.txt")
 
 
 #### REGRESSION OF MEDIUM VS. LOW GAIN ON INTEGRATION AREA
