@@ -1,20 +1,7 @@
----
-title: "parafac data prep"
-output: html_document
-editor_options: 
-  chunk_output_type: inline
----
-
-```{r}
-
 library(tidyverse)
 library(staRdom)
 
-```
-
 ### Import data
-
-```{r message=FALSE, warning=FALSE}
 
 processed <- list.files("../EEMs_EX_3nm_corrected_subset")
 
@@ -25,11 +12,7 @@ for (i in 1:length(processed)) {
   names(data)[i] <- processed[i]
 }
 
-```
-
 ### trim data
-
-```{r}
 
 trim <- lapply(data, function(x) filter(x, 
                                         em>.95*ex+50, 
@@ -39,20 +22,14 @@ trim <- lapply(data, function(x) filter(x,
                                                         #which had 0 openfluor
                                                         #matches
 
-```
+
 
 ### sample names
-
-```{r}
 
 names <- str_extract(processed, pattern = ".*\\-") %>%
   str_sub(end = -2)
 
-```
-
 ### write to .csv (to appease staRdom)
-
-```{r}
 
 temp <- trim[[1]] %>%
   spread(key = ex, value = z)
@@ -73,6 +50,4 @@ for (i in 1:length(trim)) {
   write_csv(temp, paste0("../Data/corrected csvs 190311/", names[i], ".csv"), col_names = FALSE, append = FALSE)
   
 }  
-
-```
 
