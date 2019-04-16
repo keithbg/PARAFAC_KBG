@@ -262,58 +262,58 @@ library(tidyverse)
 
 # model 1 (commented out)
 
-<!-- ## data prep 1.0 -->
+## data prep 1.0
 
-<!-- Data being loaded have Component 6 from Model 0.2 trimmed. -->
+Data being loaded have Component 6 from Model 0.2 trimmed.
 
-<!-- ```{r} -->
+```{r}
 
-<!-- eems <- eem_read_csv(path = "../Data/corrected csvs 190311",  -->
-<!--                      is_blank_corrected = TRUE, -->
-<!--                      is_scatter_corrected = TRUE, -->
-<!--                      is_ife_corrected = TRUE, -->
-<!--                      is_raman_normalized = TRUE, -->
-<!--                      manufacturer = "Horiba") -->
+eems <- eem_read_csv(path = "../Data/corrected csvs 190311",
+                     is_blank_corrected = TRUE,
+                     is_scatter_corrected = TRUE,
+                     is_ife_corrected = TRUE,
+                     is_raman_normalized = TRUE,
+                     manufacturer = "Horiba")
 
-<!-- ``` -->
+```
 
-<!-- ## model run 1.0 -->
+## model run 1.0
 
-<!-- ```{r} -->
+```{r}
 
-<!-- pf_0 <- eem_parafac(eems, comps = 3:8, normalise = TRUE) -->
+pf_0 <- eem_parafac(eems, comps = 3:7, normalise = TRUE)
 
-<!-- ``` -->
+```
 
-<!-- eem_parafac takes a couple minutes to run for 3-8 components -->
+eem_parafac takes a couple minutes to run for 3-7 components
 
-<!-- ## model comparison 1.0 -->
+## model comparison 1.0
 
-<!-- ```{r} -->
+```{r}
 
-<!-- eempf_compare(pf_0) -->
+eempf_compare(pf_0)
 
-<!-- ``` -->
+```
 
-<!-- As expected, the 5C model best exhibits: low em/ex overlap, unimodal emission peaks, usually gamma/gauss shaped. The 6C model has 5 Cs matching the 5C model, plus one C with high overlap and a lumpy em dist. -->
+As expected, the 5C model best exhibits: low em/ex overlap, unimodal emission peaks, usually gamma/gauss shaped. The 6C model has 5 Cs matching the 5C model, plus one C with high overlap and a lumpy em dist.
 
-<!-- ## outlier selection 1.0 -->
+## outlier selection 1.0
 
-<!-- ```{r} -->
+```{r}
 
-<!-- lev_0 <- eempf_leverage(pf_0[[3]]) -->
+lev_0 <- eempf_leverage(pf_0[[3]])
 
-<!-- eempf_leverage_plot(lev_0, qlabel = .025) -->
+eempf_leverage_plot(lev_0, qlabel = .025)
 
-<!-- ``` -->
+```
 
-<!-- ## outlier removal 1.0 -->
+## outlier removal 1.0
 
-<!-- ```{r} -->
+```{r}
 
-<!-- eems_1 <- eem_exclude(eems, exclude = list('em' = 541.27, 'ex' = c(246, 249), 'sample' = c('1607_SFPR_EMR_1','1605_SFMG_EML_1','1608_SFMG_EML_1','1605_REDC_EML_1','1605_SFMD_EML_1','1605_SFCD_EML_1'))) -->
+eems_1 <- eem_exclude(eems, exclude = list('em' = 541.27, 'ex' = c(246, 249), 'sample' = c('1607_SFPR_EMR_1','1605_SFMG_EML_1','1608_SFMG_EML_1','1605_REDC_EML_1','1605_SFMD_EML_1','1605_SFCD_EML_1')))
 
-<!-- ``` -->
+```
 
 <!-- 5 EMLs were among top 6 leverage. They had some of the highest absolute peak heights of the entire dataset so maybe this came through somehow despite normalization. -->
 
