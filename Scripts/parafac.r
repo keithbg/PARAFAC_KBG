@@ -52,6 +52,8 @@ eems4 <- eem_exclude(eems, list('ex' = c(246,249),
 sh4 <- splithalf(eem_list = eems4, comps = 4, rand = TRUE, normalise = TRUE)
 splithalf_plot(sh4)
 
+### 5C
+
 lev5 <- eempf_leverage(pf1[[2]])
 eempf_leverage_plot(lev5)
 eems5 <- eem_exclude(eems, list('ex' = c(246,249, 252),
